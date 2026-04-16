@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message Doctor {
+  string id = 1;
+  string payload = 2;
+}
+
+service DoctorService {
+  rpc AffiliateDoctor (Doctor) returns (Doctor);
+  rpc GetDoctor (Doctor) returns (Doctor);
+}

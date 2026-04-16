@@ -1,0 +1,15 @@
+syntax = "proto3";
+package ai;
+
+service AIService {
+  rpc AnalyzeSymptoms(AIRequest) returns (AIResponse);
+}
+
+message AIRequest {
+  repeated string symptoms = 1;
+}
+
+message AIResponse {
+  string suggested_specialty = 1;
+  string urgency = 2; // Low, Moderate, High
+}

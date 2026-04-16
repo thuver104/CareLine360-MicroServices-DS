@@ -1,0 +1,14 @@
+syntax = "proto3";
+package telemedicine;
+
+service TelemedicineService {
+  rpc GenerateLink(TelemedicineRequest) returns (TelemedicineResponse);
+}
+
+message TelemedicineRequest {
+  string appointmentId = 1;
+}
+
+message TelemedicineResponse {
+  string url = 1;
+}

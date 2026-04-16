@@ -1,0 +1,242 @@
+version: '3.0'
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development      
+    container_name: api_gateway
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./api-gateway/:/code
+      - /code/node_modules
+    ports:
+      - "3000:3000"
+    expose: 
+      - 3000
+    links:
+      - doctor-service
+      - appointment-service
+    networks: 
+      - health_network
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: auth_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./auth-service/:/code
+      - /code/node_modules
+    ports:
+      - "50051"
+    depends_on:
+      - postgres
+      - user-service
+    links:
+      - postgres
+      - user-service
+    networks: 
+      - health_network
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: user_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./user-service/:/code
+      - /code/node_modules
+    ports:
+      - "50051"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks: 
+      - health_network
+
+  doctor-service:
+    build:
+      context: ./doctor-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: doctor_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./doctor-service/:/code
+      - /code/node_modules
+    ports:
+      - "50051"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks: 
+      - health_network
+
+  appointment-service:
+    build:
+      context: ./appointment-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: appointment_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./appointment-service/:/code
+      - /code/node_modules
+    ports:
+      - "50051"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks: 
+      - health_network
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb
+    networks:
+      - health_network
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    ports:
+      - "8000:8000"
+    expose:
+      - 8000
+
+  patient-service:
+    build:
+      context: ./patient-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: patient_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./patient-service/:/code
+      - /code/node_modules
+    ports:
+      - "50052"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks: 
+      - health_network
+
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: payment_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./payment-service/:/code
+      - /code/node_modules
+    ports:
+      - "50053"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks: 
+      - health_network
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: notification_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./notification-service/:/code
+      - /code/node_modules
+    ports:
+      - "50054"
+    networks: 
+      - health_network
+
+  telemedicine-service:
+    build:
+      context: ./telemedicine-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: telemedicine_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./telemedicine-service/:/code
+      - /code/node_modules
+    ports:
+      - "50055"
+    networks: 
+      - health_network
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: ai_service
+    hostname: localhost
+    working_dir: /code
+    command: "npm run start:dev"
+    volumes:
+      - ./ai-service/:/code
+      - /code/node_modules
+    ports:
+      - "50056"
+    networks: 
+      - health_network
+
+  postgres:
+    container_name: postgres
+    hostname: localhost
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+       - "5432:5432"
+    expose: 
+      - 5432
+    networks: 
+      - health_network
+
+networks:
+  health_network:
+    driver: bridge

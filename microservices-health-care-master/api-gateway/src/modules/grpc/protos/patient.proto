@@ -1,0 +1,37 @@
+syntax = "proto3";
+package patient;
+
+service PatientService {
+  rpc CreatePatient(PatientProfileRequest) returns (PatientResponse);
+  rpc UploadMedicalReport(ReportRequest) returns (ReportResponse);
+  rpc GetPatientProfile(PatientIdRequest) returns (PatientResponse);
+}
+
+message PatientProfileRequest {
+  string userId = 1;
+  string name = 2;
+  string dob = 3;
+  string contact = 4;
+}
+
+message ReportRequest {
+  string patientId = 1;
+  string fileUrl = 2;
+  string reportType = 3;
+}
+
+message PatientResponse {
+  string id = 1;
+  string userId = 2;
+  string name = 3;
+  bool success = 4;
+}
+
+message ReportResponse {
+  string reportId = 1;
+  bool success = 2;
+}
+
+message PatientIdRequest {
+  string patientId = 1;
+}
